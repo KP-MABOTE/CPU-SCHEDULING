@@ -22,7 +22,7 @@ response time, CPU utilisation, and throughput.
 
 We then went further than a purely theoretical comparison and modelled
 realistic conditions; input/output waits (the "Blocked" process state) and
-the cost of switching between processes — to see whether the theoretical
+the cost of switching between processes to see whether the theoretical
 best algorithm still wins once those real-world costs are included.
 
 ## Key findings
