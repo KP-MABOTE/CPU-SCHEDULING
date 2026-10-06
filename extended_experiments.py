@@ -5,6 +5,7 @@ import csv, statistics as st
 import matplotlib; matplotlib.use("Agg"); import matplotlib.pyplot as plt
 from cpu_scheduler import generate_processes, PROCESS_COUNTS
 from sim_extended import ALGOS, prepare, simulate, validate
+from paths import csv_path, chart_path
 
 NUM_RUNS, BASE_SEED = 30, 1000
 SCEN = {"ideal": dict(io=False, switch=0), "realistic": dict(io=True, switch=1)}
@@ -22,7 +23,7 @@ def run():
                     v = [x[k] for x in runs]
                     row[k + "_mean"], row[k + "_std"] = round(st.mean(v), 4), round(st.stdev(v), 4)
                 rows.append(row)
-    with open("extended_results.csv", "w", newline="") as f:
+    with open(csv_path("extended_results.csv"), "w", newline="") as f:
         w = csv.DictWriter(f, fieldnames=list(rows[0])); w.writeheader(); w.writerows(rows)
     return rows
 
@@ -39,7 +40,7 @@ def chart(rows, scen, key, label, out, algos=None):
     ax.set_xlabel("Number of processes", color=FG); ax.set_ylabel(label, color=FG); ax.tick_params(colors=FG)
     [s.set_color(FG) for s in ax.spines.values()]; ax.grid(alpha=.2, color=FG)
     ax.legend(facecolor=BG, labelcolor=FG, edgecolor="none", fontsize=10)
-    fig.tight_layout(); fig.savefig(out, dpi=150, facecolor=BG); plt.close(fig)
+    fig.tight_layout(); fig.savefig(chart_path(out), dpi=150, facecolor=BG); plt.close(fig)
 
 if __name__ == "__main__":
     assert validate(), "validation failed"

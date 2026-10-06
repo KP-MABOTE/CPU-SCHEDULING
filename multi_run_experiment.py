@@ -69,10 +69,12 @@ def save_csv(rows, path):
 
 
 if __name__ == "__main__":
+    from paths import csv_path
     rows = run_multi_experiment()
-    save_csv(rows, "scheduling_results_multirun.csv")
+    out = csv_path("scheduling_results_multirun.csv")
+    save_csv(rows, out)
     print(f"Done. {NUM_RUNS} runs per (algorithm, process count) combination.")
-    print("Saved to scheduling_results_multirun.csv")
+    print("Saved to", out)
     for row in rows:
         print(row["algorithm"], row["num_processes"],
               "waiting_mean=", row["avg_waiting_time_mean"],

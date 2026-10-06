@@ -4,7 +4,8 @@ CMPG324 - Operating Systems
 Compares FCFS, SRTF, and Round Robin scheduling algorithms
 for an audio-and-video system with multiple processes.
 
-Author: (fill in your name/student number)
+Author: Kgaugelo Pertunia Mabote
+        Thabo Prince Motau-40853942
 """
 
 import random
@@ -242,8 +243,10 @@ def save_csv(rows, path):
 
 
 if __name__ == "__main__":
+    from paths import csv_path
     results = run_experiments()
-    save_csv(results, "scheduling_results.csv")
-    print(f"Done. {len(results)} rows written to scheduling_results.csv")
+    out = csv_path("scheduling_results.csv")
+    save_csv(results, out)
+    print(f"Done. {len(results)} rows written to {out}")
     for r in results:
         print(r)
