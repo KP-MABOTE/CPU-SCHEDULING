@@ -48,8 +48,9 @@ def plot_metric(data, metric_key, metric_label, out_path):
 
 
 if __name__ == "__main__":
-    data = load_data("scheduling_results.csv")
+    from paths import csv_path, chart_path
+    data = load_data(csv_path("scheduling_results.csv"))
     for key, label in METRICS:
-        out_file = f"chart_{key}.png"
+        out_file = chart_path(f"chart_{key}.png")
         plot_metric(data, key, label, out_file)
         print(f"Saved {out_file}")

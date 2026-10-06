@@ -87,5 +87,21 @@ def run_all_tests():
     return all_passed
 
 
+def test_fcfs():
+    results, _ = fcfs(TEST_PROCESSES)
+    assert check(results, EXPECTED_FCFS, "FCFS")
+
+def test_srtf():
+    results, _, _ = srtf(TEST_PROCESSES)
+    assert check(results, EXPECTED_SRTF, "SRTF")
+
+def test_round_robin():
+    results, _ = round_robin(TEST_PROCESSES, quantum=4)
+    assert check(results, EXPECTED_RR_Q4, "Round Robin (q=4)")
+
+def test_extended_simulator_matches():
+    from sim_extended import validate
+    assert validate()
+    
 if __name__ == "__main__":
     run_all_tests()

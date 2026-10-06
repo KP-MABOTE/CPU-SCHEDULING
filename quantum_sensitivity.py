@@ -58,8 +58,10 @@ def save_csv(rows, path):
 
 
 if __name__ == "__main__":
+    from paths import csv_path
     rows = run_quantum_sensitivity()
-    save_csv(rows, "quantum_sensitivity.csv")
-    print("Saved to quantum_sensitivity.csv")
+    out = csv_path("quantum_sensitivity.csv")
+    save_csv(rows, out)
+    print("Saved to", out)
     for row in rows:
         print(row)

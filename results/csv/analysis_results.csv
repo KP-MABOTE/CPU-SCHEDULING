@@ -1,0 +1,76 @@
+n,metric,A,B,mean_diff_A_minus_B,ci95_low,ci95_high,p_ttest,p_wilcoxon,significant
+10,avg_waiting_time,FCFS,SRTF,11.6967,9.9216,13.4717,0.0,2e-06,True
+10,avg_waiting_time,FCFS,Round Robin,-13.82,-16.8212,-10.8188,0.0,0.0,True
+10,avg_waiting_time,SRTF,Round Robin,-25.5167,-28.5384,-22.4949,0.0,2e-06,True
+10,avg_turnaround_time,FCFS,SRTF,11.6967,9.9216,13.4717,0.0,2e-06,True
+10,avg_turnaround_time,FCFS,Round Robin,-13.82,-16.8212,-10.8188,0.0,0.0,True
+10,avg_turnaround_time,SRTF,Round Robin,-25.5167,-28.5384,-22.4949,0.0,2e-06,True
+10,avg_response_time,FCFS,SRTF,14.2567,11.6562,16.8571,0.0,0.0,True
+10,avg_response_time,FCFS,Round Robin,24.24,21.3353,27.1447,0.0,2e-06,True
+10,avg_response_time,SRTF,Round Robin,9.9833,7.383,12.5837,0.0,2e-06,True
+10,cpu_utilization_pct,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+10,cpu_utilization_pct,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+10,cpu_utilization_pct,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+10,throughput,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+10,throughput,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+10,throughput,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+20,avg_waiting_time,FCFS,SRTF,26.47,23.5334,29.4066,0.0,0.0,True
+20,avg_waiting_time,FCFS,Round Robin,-27.775,-32.2561,-23.2939,0.0,0.0,True
+20,avg_waiting_time,SRTF,Round Robin,-54.245,-58.3494,-50.1406,0.0,0.0,True
+20,avg_turnaround_time,FCFS,SRTF,26.47,23.5334,29.4066,0.0,0.0,True
+20,avg_turnaround_time,FCFS,Round Robin,-27.775,-32.2561,-23.2939,0.0,0.0,True
+20,avg_turnaround_time,SRTF,Round Robin,-54.245,-58.3494,-50.1406,0.0,0.0,True
+20,avg_response_time,FCFS,SRTF,29.15,25.7647,32.5353,0.0,0.0,True
+20,avg_response_time,FCFS,Round Robin,50.4867,46.5541,54.4193,0.0,2e-06,True
+20,avg_response_time,SRTF,Round Robin,21.3367,17.7569,24.9164,0.0,0.0,True
+20,cpu_utilization_pct,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+20,cpu_utilization_pct,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+20,cpu_utilization_pct,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+20,throughput,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+20,throughput,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+20,throughput,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+30,avg_waiting_time,FCFS,SRTF,42.1199,39.1443,45.0956,0.0,0.0,True
+30,avg_waiting_time,FCFS,Round Robin,-39.6556,-45.3649,-33.9463,0.0,0.0,True
+30,avg_waiting_time,SRTF,Round Robin,-81.7755,-87.1392,-76.4119,0.0,0.0,True
+30,avg_turnaround_time,FCFS,SRTF,42.1202,39.1445,45.0959,0.0,0.0,True
+30,avg_turnaround_time,FCFS,Round Robin,-39.6555,-45.3648,-33.9462,0.0,0.0,True
+30,avg_turnaround_time,SRTF,Round Robin,-81.7757,-87.1394,-76.412,0.0,0.0,True
+30,avg_response_time,FCFS,SRTF,44.6899,41.2794,48.1005,0.0,2e-06,True
+30,avg_response_time,FCFS,Round Robin,76.2955,71.2973,81.2937,0.0,0.0,True
+30,avg_response_time,SRTF,Round Robin,31.6055,27.2272,35.9838,0.0,0.0,True
+30,cpu_utilization_pct,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+30,cpu_utilization_pct,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+30,cpu_utilization_pct,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+30,throughput,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+30,throughput,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+30,throughput,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+40,avg_waiting_time,FCFS,SRTF,56.3925,52.5659,60.2191,0.0,0.0,True
+40,avg_waiting_time,FCFS,Round Robin,-53.995,-61.6775,-46.3125,0.0,0.0,True
+40,avg_waiting_time,SRTF,Round Robin,-110.3875,-117.1896,-103.5854,0.0,0.0,True
+40,avg_turnaround_time,FCFS,SRTF,56.3925,52.5659,60.2191,0.0,2e-06,True
+40,avg_turnaround_time,FCFS,Round Robin,-53.995,-61.6775,-46.3125,0.0,0.0,True
+40,avg_turnaround_time,SRTF,Round Robin,-110.3875,-117.1896,-103.5854,0.0,0.0,True
+40,avg_response_time,FCFS,SRTF,58.9425,54.4535,63.4315,0.0,0.0,True
+40,avg_response_time,FCFS,Round Robin,102.0983,96.1389,108.0577,0.0,0.0,True
+40,avg_response_time,SRTF,Round Robin,43.1558,36.8664,49.4453,0.0,0.0,True
+40,cpu_utilization_pct,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+40,cpu_utilization_pct,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+40,cpu_utilization_pct,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+40,throughput,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+40,throughput,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+40,throughput,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+50,avg_waiting_time,FCFS,SRTF,71.9513,67.649,76.2537,0.0,0.0,True
+50,avg_waiting_time,FCFS,Round Robin,-66.6987,-73.734,-59.6634,0.0,0.0,True
+50,avg_waiting_time,SRTF,Round Robin,-138.65,-145.9618,-131.3382,0.0,0.0,True
+50,avg_turnaround_time,FCFS,SRTF,71.9513,67.649,76.2537,0.0,0.0,True
+50,avg_turnaround_time,FCFS,Round Robin,-66.6987,-73.734,-59.6634,0.0,0.0,True
+50,avg_turnaround_time,SRTF,Round Robin,-138.65,-145.9618,-131.3382,0.0,0.0,True
+50,avg_response_time,FCFS,SRTF,74.5333,69.6528,79.4139,0.0,0.0,True
+50,avg_response_time,FCFS,Round Robin,128.39,121.497,135.283,0.0,0.0,True
+50,avg_response_time,SRTF,Round Robin,53.8567,47.9405,59.7728,0.0,0.0,True
+50,cpu_utilization_pct,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+50,cpu_utilization_pct,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+50,cpu_utilization_pct,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+50,throughput,FCFS,SRTF,0.0,0.0,0.0,1.0,1.0,False
+50,throughput,FCFS,Round Robin,0.0,0.0,0.0,1.0,1.0,False
+50,throughput,SRTF,Round Robin,0.0,0.0,0.0,1.0,1.0,False

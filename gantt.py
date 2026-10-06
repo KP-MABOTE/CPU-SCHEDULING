@@ -146,11 +146,12 @@ def plot_gantt(segments, title, out_path):
 
 
 if __name__ == "__main__":
+    from paths import gantt_path
     fcfs_segs = fcfs_segments(TEST_PROCESSES)
     srtf_segs = srtf_segments(TEST_PROCESSES)
     rr_segs = rr_segments(TEST_PROCESSES, quantum=4)
 
-    plot_gantt(fcfs_segs, "FCFS Execution Timeline (5-process worked example)", "gantt_fcfs.png")
-    plot_gantt(srtf_segs, "SRTF Execution Timeline (5-process worked example)", "gantt_srtf.png")
-    plot_gantt(rr_segs, "Round Robin (quantum=4) Execution Timeline (5-process worked example)", "gantt_rr.png")
-    print("Saved gantt_fcfs.png, gantt_srtf.png, gantt_rr.png")
+    plot_gantt(fcfs_segs, "FCFS Execution Timeline (5-process worked example)", gantt_path("gantt_fcfs.png"))
+    plot_gantt(srtf_segs, "SRTF Execution Timeline (5-process worked example)", gantt_path("gantt_srtf.png"))
+    plot_gantt(rr_segs, "Round Robin (quantum=4) Execution Timeline (5-process worked example)", gantt_path("gantt_rr.png"))
+    print("Saved worked-example Gantt charts to results/gantt/")

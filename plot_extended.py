@@ -14,6 +14,8 @@ MULTIRUN_METRICS = [
     ("avg_waiting_time", "Average Waiting Time (ms)"),
     ("avg_turnaround_time", "Average Turnaround Time (ms)"),
     ("avg_response_time", "Average Response Time (ms)"),
+        ("cpu_utilization_pct", "CPU Utilisation (%)"),
+    ("throughput", "Throughput (processes/ms)"),
 ]
 
 
@@ -84,12 +86,14 @@ def plot_quantum_sensitivity(by_n, out_path):
 
 
 if __name__ == "__main__":
-    data = load_multirun("scheduling_results_multirun.csv")
+    from paths import csv_path, chart_path
+    data = load_multirun(csv_path("scheduling_results_multirun.csv"))
     for key, label in MULTIRUN_METRICS:
-        out_file = f"chart_multirun_{key}.png"
+        out_file = chart_path(f"chart_multirun_{key}.png")
         plot_multirun_metric(data, key, label, out_file)
         print(f"Saved {out_file}")
 
-    by_n = load_quantum_data("quantum_sensitivity.csv")
-    plot_quantum_sensitivity(by_n, "chart_quantum_sensitivity.png")
-    print("Saved chart_quantum_sensitivity.png")
+    by_n = load_quantum_data(csv_path("quantum_sensitivity.csv"))
+    out_file = chart_path("chart_quantum_sensitivity.png")
+    plot_quantum_sensitivity(by_n, out_file)
+    print(f"Saved {out_file}")
