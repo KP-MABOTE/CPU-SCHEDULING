@@ -12,7 +12,7 @@ Adds, on top of cpu_scheduler.py:
 One tick = 1 millisecond. Lower priority number = higher priority.
 With no I/O and no switch cost it reproduces the hand-checked results (see validate()).
 """
-import argparse, random
+import argparse, random, sys
 from statistics import mean
 from cpu_scheduler import generate_processes
 
@@ -25,6 +25,7 @@ ALGOS = {
     "Priority + aging": dict(policy="PRIO", aging=10),
 }
 
+
 def prepare(processes, io=False, seed=0):
     """Attach a burst list [cpu, io, cpu, ...]. With io=True a process splits its CPU burst
     around one random 2-8 ms I/O wait (the Blocked state)."""
@@ -35,10 +36,19 @@ def prepare(processes, io=False, seed=0):
         out.append(q)
     return out
 
+
 def simulate(procs, policy, quantum=4, per_process_q=False, aging=None, switch_cost=0):
-    P = [dict(pid=p["pid"], arr=p["arrival_time"], prio=p["priority"], q=p["time_quantum"], bursts=p["bursts"],
-              i=0, rem=p["bursts"][0], state="new", first=None, done=None, wait=0, waited=0, seq=0, io_end=0, boost=0)
-         for p in procs]
+   
+    # (e.g. burst_time=0 from a hand-built dict) can't drive `rem` negative and
+    # hang the while-loop. We normalise any burst of length < 1 up to 1.
+    P = []
+    for p in procs:
+        bursts = [max(1, b) for b in p["bursts"]]
+        P.append(dict(pid=p["pid"], arr=p["arrival_time"], prio=p["priority"],
+                      q=p["time_quantum"], bursts=bursts,
+                      i=0, rem=bursts[0], state="new", first=None, done=None,
+                      wait=0, waited=0, seq=0, io_end=0))
+
     n, seq, cur, last, used, useful, finished = len(P), 0, None, None, 0, 0, 0
     sw_left, sw_to, ready, timeline = 0, None, [], []
     t = t0 = min(p["arr"] for p in P)
@@ -49,7 +59,8 @@ def simulate(procs, policy, quantum=4, per_process_q=False, aging=None, switch_c
 
     while finished < n:
         for p in P:                   # arrivals, and processes whose I/O has finished (Blocked -> Ready)
-            if p["state"] == "new" and p["arr"] <= t: enq(p)
+            if p["state"] == "new" and p["arr"] <= t:
+                enq(p)
             elif p["state"] == "blocked" and p["io_end"] <= t:
                 p["i"] += 1; p["rem"] = p["bursts"][p["i"]]; enq(p)
         if cur is not None and cur["state"] == "expired":     # Round Robin slice used up
@@ -64,7 +75,14 @@ def simulate(procs, policy, quantum=4, per_process_q=False, aging=None, switch_c
             elif policy == "SRTF":
                 pick = min(cands, key=lambda p: (p["rem"], p["arr"], p["pid"]))
             else:
-                eff = lambda p: p["prio"] - ((p["boost"] if p is cur else p["waited"] // aging) if aging else 0)   # a dispatched process keeps its aging boost
+                
+                # time spent in the ready queue, and is re-evaluated for EVERY
+                # candidate on EVERY scheduling decision — including the process
+                # currently running. This matches the README's description
+                # ("priority rises the longer it waits") and removes the old
+                # frozen-boost behaviour that could preempt a long-running
+                # process in favour of a newly-arrived one.
+                eff = lambda p: p["prio"] - (p["waited"] // aging if aging else 0)
                 pick = min(cands, key=lambda p: (eff(p), p["seq"]))
             if pick is not cur:
                 if cur: enq(cur)                                        # Running -> Ready (preempted)
@@ -72,14 +90,14 @@ def simulate(procs, policy, quantum=4, per_process_q=False, aging=None, switch_c
                 if switch_cost > 0 and last is not None and last != pick["pid"]:
                     sw_to, sw_left, pick["state"] = pick, switch_cost, "switching"
                 else:
-                    cur, pick["state"], used = pick, "running", 0; pick["boost"] = pick["waited"] // aging if aging else 0
+                    cur, pick["state"], used = pick, "running", 0
 
-        if sw_to is not None:         # ---- context-switch overhead tick (no useful work) ----
+        if sw_to is not None:         #  context-switch overhead tick (no useful work)
             for p in ready: p["wait"] += 1; p["waited"] += 1
             sw_to["wait"] += 1
             timeline.append(0); t += 1; sw_left -= 1
             if sw_left == 0:
-                cur, sw_to = sw_to, None; cur["state"], used = "running", 0; cur["boost"] = cur["waited"] // aging if aging else 0
+                cur, sw_to = sw_to, None; cur["state"], used = "running", 0
             continue
 
         timeline.append(cur["pid"])   # ---- run the chosen process for 1 ms ----
@@ -87,7 +105,8 @@ def simulate(procs, policy, quantum=4, per_process_q=False, aging=None, switch_c
         cur["rem"] -= 1; useful += 1; last = cur["pid"]; cur["waited"] = 0
         for p in ready: p["wait"] += 1; p["waited"] += 1
         t += 1
-        if cur["rem"] == 0:
+        if cur["rem"] <= 0:          
+                                      
             if cur["i"] == len(cur["bursts"]) - 1:
                 cur["state"], cur["done"] = "done", t; finished += 1     # Running -> Done
             else:
@@ -95,29 +114,52 @@ def simulate(procs, policy, quantum=4, per_process_q=False, aging=None, switch_c
             cur = None
         elif policy == "RR":
             used += 1
-            if used >= (cur["q"] if per_process_q else quantum): cur["state"] = "expired"
+            if used >= (cur["q"] if per_process_q else quantum):
+                cur["state"] = "expired"
 
     span = t - t0
-    per = [dict(pid=p["pid"], waiting=p["wait"], turnaround=p["done"] - p["arr"], response=p["first"] - p["arr"]) for p in P]
-    return dict(per_process=per, timeline=timeline, t0=t0, makespan=span,
-                avg_waiting=mean(x["waiting"] for x in per), avg_turnaround=mean(x["turnaround"] for x in per),
-                avg_response=mean(x["response"] for x in per), max_waiting=max(x["waiting"] for x in per),
-                max_response=max(x["response"] for x in per),
-                low_prio_wait=mean([w["wait"] for w in P if w["prio"] >= 8] or [x["waiting"] for x in per]),   # starvation indicator: lowest-priority processes
-                utilisation=useful / span * 100, throughput=n / span)
+    per = [dict(pid=p["pid"], waiting=p["wait"], turnaround=p["done"] - p["arr"],
+                response=p["first"] - p["arr"]) for p in P]
+
+    
+    # has priority >= 8 — that turned the starvation indicator into a normal
+    # waiting-time average and hid the fact the metric was undefined. Return
+    # None instead, so callers can tell "no low-priority processes" from
+    # "low-priority processes waited X ms".
+    low = [w["wait"] for w in P if w["prio"] >= 8]
+
+    return dict(
+        per_process=per, timeline=timeline, t0=t0, makespan=span,
+        avg_waiting=mean(x["waiting"] for x in per),
+        avg_turnaround=mean(x["turnaround"] for x in per),
+        avg_response=mean(x["response"] for x in per),
+        max_waiting=max(x["waiting"] for x in per),
+        max_response=max(x["response"] for x in per),
+        low_prio_wait=mean(low) if low else None,
+        utilisation=useful / span * 100,
+        throughput=n / span,
+    )
+
 
 def validate():
     """Compare against the hand-calculated worked example (same values as test_scheduler.py)."""
     from test_scheduler import TEST_PROCESSES, EXPECTED_FCFS, EXPECTED_SRTF, EXPECTED_RR_Q4
     procs, ok = prepare(TEST_PROCESSES), True
-    for name, exp in [("FCFS", EXPECTED_FCFS), ("SRTF", EXPECTED_SRTF), ("Round Robin (q=4)", EXPECTED_RR_Q4)]:
+    for name, exp in [("FCFS", EXPECTED_FCFS), ("SRTF", EXPECTED_SRTF),
+                      ("Round Robin (q=4)", EXPECTED_RR_Q4)]:
         r = simulate(procs, **ALGOS[name])
-        got = {x["pid"]: (x["waiting"], x["turnaround"], x["response"]) for x in r["per_process"]}
+        got = {x["pid"]: (x["waiting"], x["turnaround"], x["response"])
+               for x in r["per_process"]}
         good = got == exp; ok &= good
         print(f"[{'PASS' if good else 'FAIL'}] extended simulator matches hand calculation: {name}")
     return ok
 
+
 if __name__ == "__main__":
+    
+    if not validate():
+        sys.exit("Self-check failed — see [FAIL] lines above.")
+
     ap = argparse.ArgumentParser(description="CPU scheduling simulator")
     ap.add_argument("--n", type=int, default=10, help="number of processes")
     ap.add_argument("--algo", default="SRTF", choices=list(ALGOS))
@@ -125,6 +167,16 @@ if __name__ == "__main__":
     ap.add_argument("--switch", type=int, default=0, help="context-switch cost in ms")
     ap.add_argument("--seed", type=int, default=42)
     a = ap.parse_args()
-    r = simulate(prepare(generate_processes(a.n, a.seed), a.io, a.seed), switch_cost=a.switch, **ALGOS[a.algo])
-    for k in ("avg_waiting", "avg_turnaround", "avg_response", "max_waiting", "utilisation", "throughput"):
+
+    r = simulate(prepare(generate_processes(a.n, a.seed), a.io, a.seed),
+                 switch_cost=a.switch, **ALGOS[a.algo])
+
+    for k in ("avg_waiting", "avg_turnaround", "avg_response",
+              "max_waiting", "utilisation", "throughput"):
         print(f"{k:16s}{r[k]:.3f}")
+
+    # FIX (S3): report the starvation indicator only when it is defined.
+    if r["low_prio_wait"] is not None:
+        print(f"{'low_prio_wait':16s}{r['low_prio_wait']:.3f}")
+    else:
+        print(f"{'low_prio_wait':16s}(no processes with priority >= 8 in this workload)")
